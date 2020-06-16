@@ -3,7 +3,10 @@ const xml2js = require('xml2js');
 
 
 if (require.main === module) {
-  fetchXML(process.argv[2]);
+  (async () => {
+    const data = await fetchXML(process.argv[2]);
+    console.dir(data, { depth: null });
+  })();
 }
 
 
@@ -11,18 +14,17 @@ async function fetchXML(url) {
   const res = await fetch(url);
   const content = await res.text();
   const xml = await parseXML(content);
-  console.dir(xml, { depth: 3 });
 
   if (xml.Report.Control[0].Status[0] != '通常') return;
 
-  const data = {};
+  let data = {};
   data.type     = xml.Report.Control[0].Title[0];
   data.office   = xml.Report.Control[0].PublishingOffice[0];
   data.title    = xml.Report.Head[0].Title[0];
   data.datetime = xml.Report.Head[0].ReportDateTime[0];
 
-  parseInfos(xml);
-  console.log(data);
+  data = Object.assign(data, parseInfos(xml));
+  return data;
 }
 
 
@@ -30,10 +32,63 @@ async function fetchXML(url) {
 function parseInfos(xml) {
   const infos = xml.Report.Body[0].MeteorologicalInfos[0];
 
-  meteorologicalInfo(infos);
-
+  const forecasts = meteorologicalInfo(infos);
+  const possibility = timeSeriesPossibility(infos);
+  return { forecasts, possibility };
 }
 
+
+// TimeSeriesInfo
+// 警報級の可能性の予想 
+
+function timeSeriesPossibility(infos) {
+  const info = infos.TimeSeriesInfo[1];
+
+  const timeDefine = info.TimeDefines[0].TimeDefine.map(time => {
+    return {
+      datetime: time.DateTime[0],
+      duration: time.Duration[0],
+      text: time.Name[0],
+    };
+  });
+  const areas = info.Item.map(possibilityRank);
+  return  { timeDefine, areas };
+}
+
+function possibilityRank(item) {
+  const area = {
+    code: item.Area[0].Code[0],
+    name: item.Area[0].Name[0],
+  };
+  let text;
+  const possibility = [];
+  item.Kind.forEach(kind => {
+    const property = kind.Property[0];
+    if (property.Text) text = property.Text[0];
+    const type = property.Type[0].replace('の警報級の可能性', '');
+    const rank = possibilityRankOfWarningPart(property);
+    if (rank) possibility.push({ type, rank });
+  });
+  return { area, text, possibility };
+}
+
+function possibilityRankOfWarningPart(kind) {
+  const ranks = kind.PossibilityRankOfWarningPart[0]['jmx_eb:PossibilityRankOfWarning'];
+  if (ranks[0].$.condition === '提供なし' || ranks[0]._ === 'なし') return null;
+
+  return  ranks.map(rank => {
+    if (rank.$.condition === '値なし') {
+      return null;
+    } else { 
+      return rank._
+    }
+  });
+}
+
+
+
+// MeteorologicalInfo
+// 24時間最大雨量、24時間最大降雪量
 
 function meteorologicalInfo(infos) {
   const info = infos.MeteorologicalInfo[0];
@@ -42,14 +97,11 @@ function meteorologicalInfo(infos) {
     datetime: info.DateTime[0],
     duration: info.Duration[0]
   };
-
   const areas = info.Item.map(forecast_24h);
-  console.dir(areas, { depth: null });
+  return { datetime, areas };
 }
 
 function forecast_24h(item) {
-  console.log(item);
-
   const area = {
     code: item.Area[0].Code[0],
     name: item.Area[0].Name[0],
