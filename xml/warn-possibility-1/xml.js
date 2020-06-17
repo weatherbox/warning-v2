@@ -69,7 +69,15 @@ function possibilityRank(item) {
     const rank = possibilityRankOfWarningPart(property);
     if (rank) possibility.push({ type, rank });
   });
-  return { area, text, possibility };
+
+  const possibilityAll = possibility[0].rank.map((_, i) => {
+    const ranks = possibility.map(p => p.rank[i]);
+    if (ranks.includes('高')) return '高';
+    if (ranks.includes('中')) return '中';
+    return null;
+  });
+
+  return { area, text, possibility, possibilityAll };
 }
 
 function possibilityRankOfWarningPart(kind) {
@@ -155,3 +163,5 @@ function parseXML(data) {
     });
   });
 }
+
+module.exports = { fetchXML };
