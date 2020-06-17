@@ -21,7 +21,8 @@ async function fetchXML(url) {
   data.type     = xml.Report.Control[0].Title[0];
   data.office   = xml.Report.Control[0].PublishingOffice[0];
   data.title    = xml.Report.Head[0].Title[0];
-  data.datetime = xml.Report.Head[0].ReportDateTime[0];
+  data.datetime = xml.Report.Control[0].DateTime[0];
+  data.reportDatetime = xml.Report.Head[0].ReportDateTime[0];
 
   data = Object.assign(data, parseInfos(xml));
   return data;
