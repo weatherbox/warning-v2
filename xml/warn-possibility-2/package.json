@@ -1,0 +1,17 @@
+{
+  "name": "warning",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/datastore": "^6.0.0",
+    "@google-cloud/pubsub": "^2.1.0",
+    "node-fetch": "^2.6.0",
+    "xml2js": "^0.4.23"
+  }
+}
