@@ -32,7 +32,7 @@ async function main(url) {
 
 async function saveDatastore(data) {
   const id = officeCode[data.office];
-  console.log(id);
+  const target = new Date(data.possibility.timeDefine[0].datetime);
   const entity = {
     key: datastore.key(['jma-xml-warning-possibility-1', id]),
     data: [
@@ -44,6 +44,11 @@ async function saveDatastore(data) {
       {
         name: 'title',
         value: data.title,
+        excludeFromIndexes: true,
+      },
+      {
+        name: 'target',
+        value: target,
         excludeFromIndexes: true,
       },
       {
