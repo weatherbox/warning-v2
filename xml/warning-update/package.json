@@ -1,0 +1,18 @@
+{
+  "name": "warning-possibility-update",
+  "version": "1.0.0",
+  "description": "",
+  "main": "update.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/datastore": "^6.0.0",
+    "@google-cloud/storage": "^5.1.0",
+    "jsonfile": "^6.0.1",
+    "node-fetch": "^2.6.0",
+    "xml2js": "^0.4.23"
+  }
+}
