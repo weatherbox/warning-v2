@@ -20,7 +20,7 @@ export default class PossibilityLayer {
       "source": "vt",
       "source-layer": "pref",
       "paint": {
-        "line-color": "rgba(55, 55, 55, 0.4)"
+        "line-color": "rgba(70, 70, 70, 0.4)"
       }
     });
     this.renderAll();
@@ -52,8 +52,9 @@ export default class PossibilityLayer {
           "stops": stops,
           "default": "rgba(0, 0, 0, 0)"
         },
+        "fill-outline-color": "rgba(55, 55, 55, 0.4)"
       }
-    });
+    }, 'pref-line');
   }
 
 

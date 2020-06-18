@@ -1,0 +1,11 @@
+.ui.buttons.select-button {
+	z-index: 100;
+	position: absolute;
+	right: 16px;
+	bottom: 16px;
+}
+
+.select-button.inverted .ui.button {
+	margin-left: -1px;
+	box-shadow: 0 0 0 1px #ccc inset!important;
+}

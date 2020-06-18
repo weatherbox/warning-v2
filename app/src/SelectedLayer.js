@@ -12,14 +12,13 @@ export default class SelectedLayer {
   addSelectedLayer() {
     this._addSelectedLayer('pref');
     this._addSelectedLayer('distlict');
-    this._addSelectedLayer('region');
   }
   
   _addSelectedLayer(type) {
     this.map.addLayer({
       "id": type + "-line-selected",
       "type": "line",
-      "source": type === "region" ? "region-vt" : "vt",
+      "source": "vt",
       "source-layer": type,
       "paint": {
         "line-color": "rgba(70, 171, 199, 0.8)",

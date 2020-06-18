@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 
 //import Sidebar from './Sidebar';
+import SelectButton from './components/SelectButton';
 import PossibilityLayer from './PossibilityLayer';
 
 const url = 'https://storage.googleapis.com/weather-warning/possibility.json';
 
 export default class WeatherInfo extends Component {
   state = {
-    info: null,
+    data: null,
   };
 
   componentDidMount() {
@@ -25,7 +26,7 @@ export default class WeatherInfo extends Component {
       .then(res => res.json())
       .then(data => {
         console.log(data);
-        this.setState({ info: data });
+        this.setState({ data });
         this.data = data;
         this.addLayer();
       });
@@ -37,7 +38,9 @@ export default class WeatherInfo extends Component {
   }
 
   render() {
-    return null;
+    return <SelectButton
+      data={this.state.data}
+      onSelect={this.onLayerSelect} />;
     /*
     return (
       <Sidebar
@@ -48,7 +51,7 @@ export default class WeatherInfo extends Component {
     */
   }
 
-  onSelected = (code, prefName) => {
-    this.sidebar.showPref(code, prefName);
+  onSelectLayer = (layer) => {
+    //this.layer.select(layer);
   }
 }
