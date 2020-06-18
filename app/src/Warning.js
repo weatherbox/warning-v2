@@ -40,7 +40,7 @@ export default class WeatherInfo extends Component {
   render() {
     return <SelectButton
       data={this.state.data}
-      onSelect={this.onLayerSelect} />;
+      onSelect={this.onSelectDatetime} />;
     /*
     return (
       <Sidebar
@@ -51,7 +51,7 @@ export default class WeatherInfo extends Component {
     */
   }
 
-  onSelectLayer = (layer) => {
-    //this.layer.select(layer);
+  onSelectDatetime = (index) => {
+    this.layer.selectDatetime(index);
   }
 }

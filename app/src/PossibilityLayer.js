@@ -32,6 +32,18 @@ export default class PossibilityLayer {
     this.map.on('mousemove', this.hover);
   }
 
+  selectDatetime(index) {
+    const length1 = this.data.tommorow.timeDefine.length;
+    if (index === 0) {
+      this.renderAll();
+
+    } else if (index <= length1) {
+      this.render1(index - 1);
+    } else {
+      this.render2(index - length1 - 1);
+    }
+  }
+
   renderAll() {
     const stops = [];
 
@@ -39,22 +51,56 @@ export default class PossibilityLayer {
       const rank = this.data.all[code];
       if (rank) stops.push([code, this.getColor(rank)]);
     }
+    this.renderLayer(stops);
+  }
 
-    this.map.addLayer({
-      "id": "possibility-all",
-      "type": "fill",
-      "source": "vt",
-      "source-layer": "distlict",
-      "paint": {
-        "fill-color": {
-          "property": "code",
-          "type": "categorical",
-          "stops": stops,
-          "default": "rgba(0, 0, 0, 0)"
-        },
-        "fill-outline-color": "rgba(55, 55, 55, 0.4)"
-      }
-    }, 'pref-line');
+  render1(index) {
+    const areas = this.data.tommorow.areas;
+    const stops = [];
+
+    for (let code in areas) {
+      const rank = areas[code].possibilityAll[index];
+      if (rank) stops.push([code, this.getColor(rank)]);
+    }
+    this.renderLayer(stops);
+  }
+  
+  render2(index) {
+    const areas1 = this.data.tommorow.areas;
+    const areas2 = this.data.dayafter.areas;
+    const stops = [];
+
+    for (let code in areas1) {
+      const prefCode = areas1[code].area.prefCode;
+      const rank = areas2[prefCode].possibilityAll[index];
+      if (rank) stops.push([code, this.getColor(rank)]);
+    }
+    this.renderLayer(stops);
+  }
+
+  renderLayer(stops) {
+    const fill = stops.length ? {
+      "property": "code",
+      "type": "categorical",
+      "stops": stops,
+      "default": "rgba(0, 0, 0, 0)"
+    } : null;
+
+    if (!this.added) {
+      this.map.addLayer({
+        "id": "possibility",
+        "type": "fill",
+        "source": "vt",
+        "source-layer": "distlict",
+        "paint": {
+          "fill-color": fill,
+          "fill-outline-color": "rgba(55, 55, 55, 0.4)"
+        }
+      }, 'pref-line');
+      this.added = true;
+    } else {
+      this.map.setPaintProperty('possibility', 'fill-color', fill);
+    }
   }
 
 

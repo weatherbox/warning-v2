@@ -4,7 +4,7 @@ import { Button } from 'semantic-ui-react';
 import './SelectButton.css';
 
 export default class SelectButton extends Component {
-  state = { times: null };
+  state = { times: null, selected: 0 };
 
   componentDidUpdate(prevProps) {
     if (this.props.data != prevProps.data) {
@@ -18,12 +18,22 @@ export default class SelectButton extends Component {
     return (
       <Button.Group inverted className="select-button">
         {this.state.times.map((time, i) => (
-          <Button inverted size="small" key={i}>
+          <Button
+            inverted size="small"
+            key={i}
+            onClick={() => this.onSelect(i)}
+            active={i === this.state.selected}
+          >
             {time}
           </Button>
         ))}:
       </Button.Group>
     );
+  }
+
+  onSelect(i) {
+    this.setState({ selected: i });
+    this.props.onSelect(i);
   }
 
   getTimes() {
