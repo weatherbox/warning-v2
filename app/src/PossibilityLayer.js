@@ -3,10 +3,9 @@ import SelectedLayer from './SelectedLayer';
 
 
 export default class PossibilityLayer {
-  constructor(map, data, period, onSelected) {
+  constructor(map, data, onSelected) {
     this.map = map;
-    this.weatherInfo = data;
-    this.period = period;
+    this.data = data;
 
     this.map.addSource("vt", {
       "type": "vector",
@@ -24,10 +23,7 @@ export default class PossibilityLayer {
         "line-color": "rgba(55, 55, 55, 0.4)"
       }
     });
-    return;
-    this.renderWeatherInfoPrefs();
- 
-    this.addRegion();
+    this.renderAll();
     this.selectedLayer =  new SelectedLayer(map, onSelected);
 
     this.popup = new mapboxgl.Popup({
@@ -36,28 +32,19 @@ export default class PossibilityLayer {
     this.map.on('mousemove', this.hover);
   }
 
-  selectRegion(code) {
-    this.selectedLayer.selectRegion(code);
-  }
-
-  addRegion() {
-    this.map.addSource("region-vt", {
-      "type": "vector",
-      "minzoom": 0,
-      "maxzoom": 8,
-      "tiles": ["https://weatherbox.github.io/warning-area-vt/region/{z}/{x}/{y}.pbf"]
-    });
-  }
-
-
-  renderWeatherInfoPrefs() {
+  renderAll() {
     const stops = [];
 
+    for (let code in this.data.all) {
+      const rank = this.data.all[code];
+      if (rank) stops.push([code, this.getColor(rank)]);
+    }
+
     this.map.addLayer({
-      "id": "weather-info-pref",
+      "id": "possibility-all",
       "type": "fill",
       "source": "vt",
-      "source-layer": "pref",
+      "source-layer": "distlict",
       "paint": {
         "fill-color": {
           "property": "code",
@@ -70,13 +57,16 @@ export default class PossibilityLayer {
   }
 
 
-  getColor(count) {
-    const opacity = Math.min(0.1 + 0.05 * count, 0.8);
-    return `rgba(70, 171, 199, ${opacity})`;
+  getColor(rank) {
+    const colors = {
+      '高': 'rgba(253, 108, 112, 0.5)',
+      '中':  'rgba(253, 188, 172, 0.4)'
+    };
+    return colors[rank];
   }
 
   hover = (e) => {
-    const features = this.map.queryRenderedFeatures(e.point, { layers: ['weather-info-pref', 'weather-info-tokyo'] });
+    const features = this.map.queryRenderedFeatures(e.point, { layers: [] });
     this.map.getCanvas().style.cursor = (features.length) ? 'crosshair' : '';
 
     let html;
@@ -84,8 +74,6 @@ export default class PossibilityLayer {
       const code = this.getCode(features[0].properties.code);
       const infos = this.weatherInfo.prefs[code];
       if (infos) {
-        const title = infos[0].title.split('に関する')[0];
-        html = title + '<br/><span>' + this.getTimeBefore(infos[0]) + '</span>';
       }
     }
     
