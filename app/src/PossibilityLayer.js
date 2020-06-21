@@ -175,14 +175,16 @@ export default class PossibilityLayer {
   }
 
   hover = (e) => {
-    const features = this.map.queryRenderedFeatures(e.point, { layers: [] });
+    const features = this.map.queryRenderedFeatures(e.point, { layers: ['possibility'] });
     this.map.getCanvas().style.cursor = (features.length) ? 'crosshair' : '';
 
     let html;
     if (features.length) {
-      const code = this.getCode(features[0].properties.code);
-      const infos = this.weatherInfo.prefs[code];
-      if (infos) {
+      console.log(features[0]);
+      const code = features[0].properties.code; 
+      const info = this.data.tommorow.areas[code];
+      if (info) {
+        html = info.text;
       }
     }
     
