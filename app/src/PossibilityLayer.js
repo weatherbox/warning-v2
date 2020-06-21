@@ -1,11 +1,24 @@
 import mapboxgl from 'mapbox-gl';
 import SelectedLayer from './SelectedLayer';
 
+const types = {
+  all: 'all',
+  rain: '雨',
+  snow: '雪',
+  wind: '風（風雪）',
+  wave: '波',
+};
+
 
 export default class PossibilityLayer {
   constructor(map, data, onSelected) {
     this.map = map;
     this.data = data;
+
+    this.selected = {
+      index: 0,
+      type: 'all',
+    };
 
     this.map.addSource("vt", {
       "type": "vector",
@@ -36,25 +49,31 @@ export default class PossibilityLayer {
   // UI API
 
   selectDatetime(index) {
-    const length1 = this.data.tommorow.timeDefine.length;
-    if (index === 0) {
-      this.renderAll();
-
-    } else if (index <= length1) {
-      this.render1(index - 1);
-    } else {
-      this.render2(index - length1 - 1);
-    }
+    this.selected.index = index;
   }
 
   selectType(type) {
-    console.log(type);
+    this.selected.type = types[type];
+    this.render();
   }
 
 
   // 
+  render() {
+    const { index, type } = this.selected;
+    const length1 = this.data.tommorow.timeDefine.length;
+    if (index === 0) {
+      this.renderAll(type);
 
-  renderAll() {
+    } else if (index <= length1) {
+      this.render1(type, index - 1);
+    } else {
+      this.render2(type, index - length1 - 1);
+    }
+  }
+
+  renderAll(type) {
+    if (type && type !== 'all') return this.renderAllType(type);
     const stops = [];
 
     for (let code in this.data.all) {
@@ -64,28 +83,55 @@ export default class PossibilityLayer {
     this.renderLayer(stops);
   }
 
-  render1(index) {
+  render1(type, index) {
     const areas = this.data.tommorow.areas;
     const stops = [];
 
     for (let code in areas) {
-      const rank = areas[code].possibilityAll[index];
+      const rank = this.getRank(areas[code], type, index);
+      console.log(rank);
       if (rank) stops.push([code, this.getColor(rank)]);
     }
     this.renderLayer(stops);
   }
   
-  render2(index) {
+  render2(type, index) {
     const areas1 = this.data.tommorow.areas;
     const areas2 = this.data.dayafter.areas;
     const stops = [];
 
     for (let code in areas1) {
       const prefCode = areas1[code].area.prefCode;
-      const rank = areas2[prefCode].possibilityAll[index];
+      const rank = this.getRank(areas2[prefCode], type, index);
       if (rank) stops.push([code, this.getColor(rank)]);
     }
     this.renderLayer(stops);
+  }
+
+  renderAllType(type) {
+    const areas1 = this.data.tommorow.areas;
+    const areas2 = this.data.dayafter.areas;
+    const stops = [];
+
+    for (let code in areas1) {
+      const prefCode = areas1[code].area.prefCode;
+      const p1 = areas1[code].possibility.find(p => p.type === type) || {};
+      const p2 = areas2[prefCode].possibility.find(p => p.type === type) || {};
+      const rank = this.getMaxRank([].concat(p1.rank, p2.rank));
+      if (rank) stops.push([code, this.getColor(rank)]);
+    }
+    this.renderLayer(stops);
+
+  }
+
+  getRank(area, type, index) {
+    if (type === 'all') {
+      return area.possibilityAll[index];
+
+    } else {
+      const p = area.possibility.find(p => p.type === type);
+      return p ? p.rank[index] : undefined;
+    }
   }
 
   renderLayer(stops) {
@@ -94,7 +140,7 @@ export default class PossibilityLayer {
       "type": "categorical",
       "stops": stops,
       "default": "rgba(0, 0, 0, 0)"
-    } : null;
+    } : 'rgba(0, 0, 0, 0)';
 
     if (!this.added) {
       this.map.addLayer({
@@ -120,6 +166,12 @@ export default class PossibilityLayer {
       '中':  'rgba(253, 188, 172, 0.4)'
     };
     return colors[rank];
+  }
+
+  getMaxRank(ranks) {
+    if (ranks.includes('高')) return '高'; 
+    if (ranks.includes('中')) return '中';
+    return null;
   }
 
   hover = (e) => {

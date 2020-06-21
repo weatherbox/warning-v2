@@ -6,7 +6,10 @@ import './TypeDropdown.css';
 export default class TypeDropdown extends Component {
   state = { value: 'all' };
 
-  handleChange = (e, { value }) => this.setState({ value })
+  handleChange = (e, { value }) => {
+    this.setState({ value });
+    this.props.onSelect(value);
+  }
 
   types = [
     { key: 0, text: 'すべて', value: 'all' },
