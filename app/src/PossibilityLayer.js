@@ -32,6 +32,9 @@ export default class PossibilityLayer {
     this.map.on('mousemove', this.hover);
   }
 
+
+  // UI API
+
   selectDatetime(index) {
     const length1 = this.data.tommorow.timeDefine.length;
     if (index === 0) {
@@ -43,6 +46,13 @@ export default class PossibilityLayer {
       this.render2(index - length1 - 1);
     }
   }
+
+  selectType(type) {
+    console.log(type);
+  }
+
+
+  // 
 
   renderAll() {
     const stops = [];

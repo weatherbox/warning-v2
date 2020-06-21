@@ -7,7 +7,7 @@ export default class SelectButton extends Component {
   state = { times: null, selected: 0 };
 
   componentDidUpdate(prevProps) {
-    if (this.props.data != prevProps.data) {
+    if (this.props.data !== prevProps.data) {
       const times = this.getTimes();
       this.setState({ times });
     }

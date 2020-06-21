@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 //import Sidebar from './Sidebar';
 import SelectButton from './components/SelectButton';
+import TypeDropdown from './components/TypeDropdown';
 import PossibilityLayer from './PossibilityLayer';
 
 const url = 'https://storage.googleapis.com/weather-warning/possibility.json';
@@ -38,9 +39,13 @@ export default class WeatherInfo extends Component {
   }
 
   render() {
-    return <SelectButton
-      data={this.state.data}
-      onSelect={this.onSelectDatetime} />;
+    return <>
+      <SelectButton
+        data={this.state.data}
+        onSelect={this.onSelectDatetime} />
+      <TypeDropdown
+        onSelect={this.onSelectType} />
+    </>;
     /*
     return (
       <Sidebar
@@ -53,5 +58,9 @@ export default class WeatherInfo extends Component {
 
   onSelectDatetime = (index) => {
     this.layer.selectDatetime(index);
+  }
+
+  onSelectType = (type) => {
+    this.layer.selectType(type);
   }
 }

@@ -1,0 +1,33 @@
+.ui.menu.type-dropdown {
+	z-index: 100;
+	position: absolute;
+	right: 16px;
+	top: 16px;
+}
+
+.ui.inverted.menu.type-dropdown .dropdown.item {
+	background-color: rgba(0, 0, 0, 0.4);
+}
+
+.ui.menu.type-dropdown .item {
+	background-color: rgba(0, 0, 0, 0.4);
+	padding: 4px 16px;
+}
+
+.ui.menu.type-dropdown .dropdown.item  .menu {
+	background-color: rgba(0, 0, 0, 0.4);
+}
+
+.ui.menu.type-dropdown .ui.dropdown .item,
+.ui.menu.type-dropdown .ui.dropdown .menu > .active.item,
+.ui.menu.type-dropdown .ui.dropdown .menu > .selected.item {
+	background-color: rgba(0, 0, 0, 0.4) !important;
+	color: #f0f0f0 !important;
+}
+
+.ui.menu.type-dropdown .ui.dropdown .item:hover,
+.ui.menu.type-dropdown .ui.dropdown .menu > .active.item:hover,
+.ui.menu.type-dropdown .ui.dropdown .menu > .selected.item:hover {
+	background-color: rgba(0, 0, 0, 0.2) !important;
+	color: #aaa !important;
+}
