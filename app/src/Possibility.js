@@ -7,7 +7,7 @@ import PossibilityLayer from './PossibilityLayer';
 
 const url = 'https://storage.googleapis.com/weather-warning/possibility.json';
 
-export default class WeatherInfo extends Component {
+export default class Possibility extends Component {
   state = {
     data: null,
   };

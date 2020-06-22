@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css'
 
-import Warning from './Warning';
+//import Warning from './Warning';
+import Possibility from './Possibility';
 import './Map.css';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoidGF0dGlpIiwiYSI6ImNqZWZ4eWM3NTI2cGszM2xpYXEyZndpd3IifQ.ifzbR45HecVGxChbdR2hiw';
@@ -28,7 +29,7 @@ export default class Map extends Component {
     return (
       <div className="app">
         <div ref={el => this.mapContainer = el} id="map" />
-        <Warning
+        <Possibility
           ref={ref => this.child = ref}
         />
       </div>

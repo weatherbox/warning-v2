@@ -50,6 +50,7 @@ export default class PossibilityLayer {
 
   selectDatetime(index) {
     this.selected.index = index;
+    this.render();
   }
 
   selectType(type) {
