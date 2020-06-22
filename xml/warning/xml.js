@@ -4,7 +4,7 @@ const xml2js = require('xml2js');
 
 if (require.main === module) {
   (async () => {
-    const data = await fetcXMLh(process.argv[2]);
+    const data = await fetchXML(process.argv[2]);
     console.log(data);
   })();
 }
@@ -58,8 +58,7 @@ function getWarnings(kinds) {
   if (kinds[0].Status[0] === '発表警報・注意報はなし') {
     return [];
   } else {
-    const names = kinds.map(kind => kind.Name[0])
-      .filter(name => name !== '解除');
+    const names = kinds.filter(kind => kind.Status[0] !== '解除').map(kind => kind.Name[0]);
     return names;
   }
 }
@@ -68,7 +67,7 @@ function getStatus(kinds) {
   if (kinds[0].Status[0] === '発表警報・注意報はなし') {
     return 'none';
   } else {
-    const names = kinds.map(kind => kind.Name[0]);
+    const names = kinds.filter(kind => kind.Status[0] !== '解除').map(kind => kind.Name[0]);
     if (names.find(d => d.includes('特別警報'))) return 'emergency';
     if (names.find(d => d.includes('警報'))) return 'warning';
     if (names.find(d => d.includes('注意報'))) return 'advisory';

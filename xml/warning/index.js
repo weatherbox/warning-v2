@@ -11,13 +11,14 @@ exports.handler = async (event, context) => {
   const message = JSON.parse(Buffer.from(pubsubMessage, 'base64').toString());
   console.log(message);
 
-  await main(message.url);
+  const data = await main(message.url);
+  console.log(data);
 };
 
 if (require.main === module) {
   (async () => {
     const data = await main(process.argv[2]);
-  console.log(data);
+    console.log(data);
   })();
 }
 
